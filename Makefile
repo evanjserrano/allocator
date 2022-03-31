@@ -14,3 +14,6 @@ $(BIN): $(OBJS)
 
 clean:
 	$(RM) -r $(BIN) *.o
+
+run: all
+	./$(BIN)
