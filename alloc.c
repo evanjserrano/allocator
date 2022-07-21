@@ -2,6 +2,15 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#define DEBUG 1
+
+#if DEBUG
+#define dprintf(...) fprintf(stderr, "%s(): \t", __FUNCTION__); \
+                     fprintf(stderr, __VA_ARGS__)
+#else
+#define dprintf(...)
+#endif
+
 // const size_t BLOCK_SIZE = 0x1000; // 4KB
 const size_t BLOCK_SIZE = 0x20; // 32B
 void* heap_start = NULL;
@@ -11,6 +20,7 @@ const size_t MAX_ALLOC = 0x8; // 8B
 // const size_t MAX_ALLOC = BLOCK_SIZE;
 // const size_t MAX_ALLOC = UINT16_MAX & -2;
 
+void* get_chunk(size_t);
 void print_heap();
 
 /**
@@ -26,20 +36,28 @@ void* get_chunk(size_t size)
 
     // initialize the heap start
     if (heap_start == NULL)
+    {
+        dprintf("Initializing Heap\n");
         heap_start = prog_break;
+    }
 
+    // check size parameter
     if (size > MAX_ALLOC)
+    {
+        dprintf("Size (%zu) too large (size > %zu)\n", size, MAX_ALLOC);
         return NULL;
-
-    uint8_t* curr_chunk = heap_start;
+    }
 
     // traverse through currently allocated memory to find free block
+    dprintf("Searching for free block of memory\n");
+    uint8_t* curr_chunk = heap_start;
     while (curr_chunk < prog_break)
     {
         preamble_t chunk_size = *((preamble_t*)curr_chunk);
         // valid chunk
         if (chunk_size >= size)
         {
+            dprintf("Free chunk found: %p\n", curr_chunk);
             return curr_chunk;
         }
 
@@ -62,9 +80,10 @@ void* get_chunk(size_t size)
 
 void* allocm(size_t size)
 {
-    fprintf(stderr, "%s(%zu)\n", __FUNCTION__, size);
-    size_t chunk_size = size + sizeof(preamble_t);
+    dprintf("size = %zu\n", size);
+
     /* Look for free chunk */
+    size_t chunk_size = size + sizeof(preamble_t);
     void* chunk = get_chunk(chunk_size);
     preamble_t rem;
     if (chunk == NULL || (rem = *(preamble_t*)chunk - chunk_size) < 0)
@@ -100,6 +119,7 @@ void freem(void* ptr)
 
 void print_heap()
 {
+    dprintf("\n");
     size_t heap_size = (size_t)(sbrk(0) - heap_start);
     int rows = heap_size / 0x10;
     int cols = 0x10;
