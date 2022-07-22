@@ -1,0 +1,12 @@
+TODO:
+ - Memory alignment
+ - separate DS instead of preamble?
+    - Free List for O(log(n)) search
+    - Keep memory blocks out of allocated memory
+
+Completed:
+ - Allocate any size of memory
+    - Allocate multiple unique pointers
+ - Free allocated memory to be reallocated
+ - Allocate large amounts of memory (move program break)
+ - Combine free chunks to create larger chunk
