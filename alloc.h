@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+#define _BLOCK_SIZE 0x20UL
+#define _MAX_ALLOC  0x20UL
+// #define _MAX_ALLOC (UINT16_MAX & -2)
+
 /**
  * @brief Allocate block of memory of `size` bytes
  *
