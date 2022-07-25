@@ -11,6 +11,9 @@ extern void print_heap();
 int main(void)
 {
     printf("Hello, World!\n");
+    printf("Max bytes you can allocate: %d\n"
+           "Num bytes added per heap resize: %d\n",
+           _MAX_ALLOC, _BLOCK_SIZE);
 
 #define NUM_PTRS 8
     void* ptrs[NUM_PTRS];
@@ -25,15 +28,19 @@ int main(void)
         printf("ptr: %p, size: %d\n", ptrs[i], i);
     }
     PRINT_HEAP();
-
+    printf("Freeing %p\n", ptrs[3]);
     freem(ptrs[3]);
     PRINT_HEAP();
+    printf("Allocating %dB\n", 0);
     ptrs[3] = allocm(0);
     PRINT_HEAP();
+    printf("Freeing %p\n", ptrs[3]);
     freem(ptrs[3]);
     PRINT_HEAP();
+    printf("Freeing %p\n", ptrs[4]);
     freem(ptrs[4]);
     PRINT_HEAP();
+    printf("Allocating %dB\n", 7);
     ptrs[3] = allocm(7);
     PRINT_HEAP();
 
