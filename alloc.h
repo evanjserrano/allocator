@@ -3,9 +3,11 @@
 
 #include <stdlib.h>
 
-#define _BLOCK_SIZE 0x20UL
-#define _MAX_ALLOC  0x20UL
-// #define _MAX_ALLOC (UINT16_MAX & -2)
+#define _MAX_ALLOC  0x20
+#define _BLOCK_SIZE 0x40
+
+_Static_assert(_BLOCK_SIZE % _MAX_ALLOC == 0,
+               "MAX_ALLOC must be divisible by BLOCK_SIZE");
 
 /**
  * @brief Allocate block of memory of `size` bytes
